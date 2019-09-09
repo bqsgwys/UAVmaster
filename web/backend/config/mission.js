@@ -46,7 +46,7 @@ const details = {
     max: 1,
   },
   done: {
-    description: "结束",
+    description: "强制结束",
     score: 0,
     max: 1,
   },

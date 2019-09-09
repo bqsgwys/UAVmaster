@@ -123,7 +123,10 @@ router.post('/:groupName/:mission', checkAdmin, async (ctx) => {
       await UAVSrv.lastAction(groupName, mission, 1, `${groupName} 发生了碰撞\n可惜了`);
     else if (mission === "done")
       await UAVSrv.lastAction(groupName, mission, 1, `${groupName} 比赛结束\n`);
-    else
+    else if (mission === "landing") {
+      await UAVSrv.finishMissionByName(groupName, "done")
+      await UAVSrv.lastAction(groupName, mission, 1, `${groupName} 成功落地\n比赛结束\n`);
+    } else
       await UAVSrv.lastAction(groupName, mission, 1, `${groupName} \n完成${missionDetails[mission].description}`);
     ctx.body = `${ctx.params.groupName}成功完成任务:${missionDetails[mission].description}`;
     return;
