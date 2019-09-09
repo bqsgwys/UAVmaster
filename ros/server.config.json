@@ -1,0 +1,15 @@
+{
+  "server": "http://localhost:8080",
+  "pass": {
+    "secret": "SecretPassword"
+  },
+  "simpleMissions": [
+    "received",
+    "launched",
+    "cruising",
+    "through",
+    "landing",
+    "done",
+    "crush"
+  ]
+}
