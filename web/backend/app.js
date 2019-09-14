@@ -45,11 +45,15 @@ app.use(views(__dirname + '/views', {
 }))
 
 // logger
+var old = ""
 app.use(async (ctx, next) => {
   const start = new Date()
   await next()
   const ms = new Date() - start
-  console.log(`${ctx.method} ${decodeURI(ctx.url)} - ${ms}ms`)
+  if (`${ctx.method} ${decodeURI(ctx.url)}` !== old) {
+    console.log(`${ctx.method} ${decodeURI(ctx.url)} - ${ms}ms`)
+    old = `${ctx.method} ${decodeURI(ctx.url)}`
+  }
 })
 
 // routes

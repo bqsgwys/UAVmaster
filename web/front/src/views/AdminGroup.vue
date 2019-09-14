@@ -16,7 +16,7 @@
             SCORE:{{ groupDetails.score }}
           </div>
           <div class="sub-title" style="color: #E0F7FA;position: relative;">
-            <span style="white-space: pre-line;">{{ layoutText }}</span>
+            <span style="">{{ layoutText }}</span>
           </div>
         </div>
       </v-flex> </v-layout
@@ -25,14 +25,14 @@
         <v-btn
           v-for="(val, key) in missionList"
           :key="key"
-          text
+          text 
           rounded
           class="my-2"
-          @click="done(key)"
+          @click="finish(key)" 
         >
           {{ val }}
         </v-btn>
-        <v-btn class="my-2" color="red darken-2" rounded @click="done('crush')">
+        <v-btn class="my-2" color="red darken-2" rounded @click="finish('crush')">
           发生碰撞(会扣分)
         </v-btn>
         <v-btn class="my-2" color="red darken-1" rounded @click="reset()">
@@ -88,23 +88,15 @@ export default {
     for (let x in this.$options.timer) clearInterval(this.$options.timer[x]);
   },
   watch: {
-    async done(key) {
-      await this.$http.post(`/uav/${this.groupName}/${key}`, {
-        secret: this.$root.secret,
-      });
-    },
     groupDetails(to, from) {
       if (!this.diff(from, to)) {
-        if (from.startTimeStamp && to.lastAction && to.lastAction.mission) {
-          this.overlay = true;
+        console.log(to);
+        if (to.lastAction && to.lastAction.mission) {
           this.layoutText = to.lastAction.extra;
-          setTimeout(() => {
-            this.overlay = false;
-          }, 3000);
           if (to.lastAction.mission === "received") {
             this.start = Date.now();
           }
-          if (to.lastAction.mission === "done") {
+          if (to.lastAction.mission === "done"||to.lastAction.mission === "landing") {
             this.stopTimer();
           }
         }
@@ -112,6 +104,11 @@ export default {
     },
   },
   methods: {
+    async finish(key) {
+      await this.$http.post(`/uav/${this.groupName}/${key}`, {
+        secret: this.$root.secret,
+      });
+    },
     startTimer() {
       if (this.$options.timer.main) clearInterval(this.$options.timer.main);
       if (this.groupDetails.doneMission.received.length)
@@ -120,7 +117,7 @@ export default {
         ).getTime();
       else this.start = Date.now();
       this.$options.timer.main = setInterval(this.chg, 39);
-      this.$options.timer.updateInfo = setInterval(this.updateInfo, 1000);
+      this.$options.timer.updateInfo = setInterval(this.updateInfo, 1000); 
     },
     chg() {
       this.timer = Date.now();

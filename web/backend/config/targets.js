@@ -1,10 +1,10 @@
 const [minX, minY, maxX, maxY] = [0, 0, 5, 5];
 const validTarget = [
   "猫",
-  "煤气罐",
-  "哥布林",
-  "实验数据",
-  "手办",
+  "文件",
+  "画作",
+  "婴儿",
+  "危险品",
 ];
 
 Array.prototype.random = function () {
