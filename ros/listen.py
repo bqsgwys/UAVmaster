@@ -186,4 +186,6 @@ if __name__ == '__main__':
   rospy.Subscriber('/end', String, doneHandler, queue_size=10)
   rospy.Publisher('/start', String, queue_size=10)
   rospy.Publisher('/received', String, queue_size=10)
+  received()
+  start()
   rospy.spin()
