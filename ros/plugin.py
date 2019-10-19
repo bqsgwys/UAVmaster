@@ -7,7 +7,6 @@ sys.setdefaultencoding('utf-8')
 import requests
 import json
 import os
-import copy
 from urllib import quote
 
 global configs
@@ -49,6 +48,3 @@ class communicator:
           u"{0}/uav/{1}/seen/{2}".format(configs["server"], self.groupName,
                                          target),
           data=payload)
-
-a = communicator("🐱")
-a.finish("launched")

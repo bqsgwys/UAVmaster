@@ -68,7 +68,7 @@ export default {
           if (to.lastAction.mission === "received") {
             this.start = Date.now();
           }
-          if (to.lastAction.mission === "done") {
+          if (to.lastAction.mission === "done"||to.lastAction.mission === "landing") {
             this.stopTimer();
           }
         }
@@ -88,6 +88,10 @@ export default {
     },
     chg() {
       this.timer = Date.now();
+      if(this.groupDetails.doneMission.done.length){
+        this.stopTimer();
+        this.timer = new Date(this.groupDetails.doneMission.done[0])
+      }
     },
     stopTimer() {
       if (this.$options.timer.main) clearInterval(this.$options.timer.main);

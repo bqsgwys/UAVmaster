@@ -90,9 +90,12 @@ export default {
   watch: {
     groupDetails(to, from) {
       if (!this.diff(from, to)) {
-        console.log(to);
-        if (to.lastAction && to.lastAction.mission) {
+        if (from.startTimeStamp && to.lastAction && to.lastAction.mission) {
+          this.overlay = true;
           this.layoutText = to.lastAction.extra;
+          setTimeout(() => {
+            this.overlay = false;
+          }, 3000);
           if (to.lastAction.mission === "received") {
             this.start = Date.now();
           }
@@ -101,7 +104,7 @@ export default {
           }
         }
       }
-    },
+    }
   },
   methods: {
     async finish(key) {
@@ -113,35 +116,26 @@ export default {
       if (this.$options.timer.main) clearInterval(this.$options.timer.main);
       if (this.groupDetails.doneMission.received.length)
         this.start = new Date(
-          this.groupDetails.doneMission.received[0],
+          this.groupDetails.doneMission.received[0]
         ).getTime();
       else this.start = Date.now();
       this.$options.timer.main = setInterval(this.chg, 39);
-      this.$options.timer.updateInfo = setInterval(this.updateInfo, 1000); 
+      this.$options.timer.updateInfo = setInterval(this.updateInfo, 1000);
     },
     chg() {
       this.timer = Date.now();
+      if(this.groupDetails.doneMission.done.length){
+        this.stopTimer();
+        this.timer = new Date(this.groupDetails.doneMission.done[0])
+      }
     },
     stopTimer() {
       if (this.$options.timer.main) clearInterval(this.$options.timer.main);
     },
     async updateInfo() {
       this.groupDetails = (await this.$http.get(
-        encodeURI(`/uav/${this.groupName}`),
+        encodeURI(`/uav/${this.groupName}`)
       )).body;
-    },
-    async reset() {
-      if ("RESET" == prompt("输入'RESET'来确认重置")) {
-        this.layoutText = (await this.$http.put(
-          `/uav/${encodeURI(this.groupName)}/mission`,
-          {
-            secret: this.$root.secret,
-          },
-        )).body;
-        alert("重置成功");
-      } else {
-        alert("重置取消");
-      }
     },
     diff(obj1, obj2) {
       let o1 = obj1 instanceof Object;
@@ -156,6 +150,19 @@ export default {
         } else if (obj1[o] !== obj2[o]) return false;
       }
       return true;
+    },
+    async reset() {
+      if ("RESET" == prompt("输入'RESET'来确认重置")) {
+        this.layoutText = (await this.$http.put(
+          `/uav/${encodeURI(this.groupName)}/mission`,
+          {
+            secret: this.$root.secret,
+          },
+        )).body;
+        alert("重置成功");
+      } else {
+        alert("重置取消");
+      }
     },
   },
 };
