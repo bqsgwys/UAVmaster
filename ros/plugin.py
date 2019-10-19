@@ -37,7 +37,7 @@ class communicator:
     elif missionName == u"seenFire":
       payload = dict(configs[u"pass"])
       payload["x"] = x
-      payload["y"] = x
+      payload["y"] = y
       requests.post(
           u"{0}/uav/{1}/seenFire".format(configs["server"], self.groupName),
           data=payload)
@@ -49,3 +49,6 @@ class communicator:
           u"{0}/uav/{1}/seen/{2}".format(configs["server"], self.groupName,
                                          target),
           data=payload)
+
+a = communicator("🐱")
+a.finish("launched")
