@@ -3,6 +3,7 @@ const UAVSrv = require("../service/uav");
 const {
   checkAdmin
 } = require("./checkAdmin");
+
 const {
   nameValidator,
   mission: {
@@ -27,7 +28,7 @@ router.get('/missionList', async (ctx) => {
   return;
 });
 
-router.post('/:groupName', checkAdmin, async (ctx) => {
+router.post('/:groupName', async (ctx) => {
   const groupName = ctx.params.groupName;
   if (nameValidator(groupName))
     if (!(await UAVSrv.getByName(groupName)))
@@ -48,7 +49,7 @@ router.get('/:groupName', async (ctx) => {
   return ctx.body = ret;
 });
 
-router.put('/:groupName/mission', checkAdmin, async (ctx) => {
+router.put('/:groupName/mission', async (ctx) => {
   const groupName = ctx.params.groupName;
   await UAVSrv.resetMission(groupName);
   ctx.body = "重置成功";
@@ -56,7 +57,7 @@ router.put('/:groupName/mission', checkAdmin, async (ctx) => {
   return;
 });
 
-router.post('/:groupName/seenFire', checkAdmin, async (ctx) => {
+router.post('/:groupName/seenFire', async (ctx) => {
   const groupName = ctx.params.groupName;
   const group = await UAVSrv.getByName(groupName);
   const [x, y] = [
@@ -84,7 +85,7 @@ router.post('/:groupName/seenFire', checkAdmin, async (ctx) => {
   }
 });
 
-router.post('/:groupName/seen/:target', checkAdmin, async (ctx) => {
+router.post('/:groupName/seen/:target', async (ctx) => {
   const groupName = ctx.params.groupName;
   const target = ctx.params.target;
   const group = await UAVSrv.getByName(groupName);
@@ -112,7 +113,7 @@ router.post('/:groupName/seen/:target', checkAdmin, async (ctx) => {
   return;
 });
 
-router.post('/:groupName/:mission', checkAdmin, async (ctx) => {
+router.post('/:groupName/:mission', async (ctx) => {
   const {
     groupName,
     mission

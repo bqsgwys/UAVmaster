@@ -2,48 +2,48 @@ const mongoose = require("mongoose");
 const autoIncrement = require("mongoose-plugin-autoinc");
 const Schema = mongoose.Schema;
 const {
-  nameValidator,
-  mission: {
-    missionValidator,
-    missionDefault
-  },
-  targets: {
-    targetGenerator
-  }
+  nameValidator
 } = require("../config");
 
+const rand = (a, b)=>
+  Math.round(Math.random * (b - a)) + a;
+  
 const UAV = new Schema({
-  matchInfo: {
-    type: {
-      _id: false,
-      firePosition: {
-        x: Number,
-        y: Number,
-        _id: false,
-      },
-      targets: [{
-        targetName: String,
-        position: Number,
-        _id: false,
-      }],
-    },
-    default: targetGenerator,
-  },
   groupName: {
     type: String,
     unique: true,
     validate: nameValidator,
   },
-  startAt: Date,
-  doneMission: {
-    type: Object,
-    default: missionDefault,
-    validate: missionValidator,
+  firepos: {
+    type: Number,
+    default:rand(1,25)
   },
-  lastAction: {
-    type: Object,
-    default: new Object(),
+  tar:{
+    type: [Number, Number, Number],
+    default: [1,1,1].map(x=>rand(1,5))
   },
+  mission: {
+    _id: false,
+    type: {
+      ready:Date,
+      takeoff: Date,
+      seenFire: Date,
+      seenTarget: [{
+        tar: Number,
+        time: 0
+      }],
+      crush: [Date],
+    },
+    default: {
+      ready: 0,
+      takeoff: 0,
+      seenFire: 0,
+      seenTarget: [],
+      crush: [],
+      done:[],
+    }
+  },
+  lastMission: String,
 })
 
 UAV.plugin(autoIncrement.plugin, {

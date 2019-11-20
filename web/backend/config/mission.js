@@ -1,10 +1,5 @@
 const details = {
-  received: {
-    description: "接收指令",
-    score: 5,
-    max: 1,
-  },
-  launched: {
+  takeoff: {
     description: "起飞",
     score: 5,
     max: 1,
