@@ -6,19 +6,6 @@ const {
   say
 } = require("./ws")
 
-module.exports.gen = async (group, groupName) => {
-  let l = await db.list;
-  if (l.indexOf(group) == -1)
-    l.push(group);
-  await (db.list = l);
-  await ((await db.rst)(group));
-  g = (await db[group])
-  g.name = groupName
-  g.id = group
-  g.mission = genmission();
-  await (db[group] = g)
-  say(group);
-}
 
 module.exports.ready = async (group) => {
   let g = (await db[group])

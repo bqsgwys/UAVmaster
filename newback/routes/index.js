@@ -1,10 +1,11 @@
 const router = require('koa-router')()
 const player = require('../service/player')
+const gen = require('../service/gen')
 router.prefix("/api")
 router.get('/gen/:userId/:userName', async (ctx, next) => {
   let id = ctx.params.userId;
   let name = ctx.params.userName;
-  await player.gen(id, name);
+  await gen(id, name);
   return ctx.body = "success";
 })
 
