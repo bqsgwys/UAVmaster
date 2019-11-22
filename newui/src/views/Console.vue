@@ -177,8 +177,6 @@
                   目标物体3<br />{{ Tar3pos }}
                 </v-btn>
               </v-col>
-              <v-col cols="12" sm="3" style="height:100%;"></v-col>
-              <v-col cols="12" sm="3" style="height:100%;"></v-col>
             </v-row>
           </v-card>
         </v-row>
@@ -217,9 +215,23 @@ export default {
   }),
   created() {},
   watch: {
-    $route() {
+    async $route() {
       // 对路由变化作出响应...
-      this.groupId = this.$route.params.group;
+      let vm = this;
+      vm.groupId = vm.$route.params.group;
+      vm.socket.close();
+      vm.groupId = vm.$route.params.group;
+      vm.groupList = (await vm.$http.get(encodeURI(`/api/list`))).body;
+      if (vm.groupList.indexOf(vm.groupId) == -1) {
+        vm.$router.push(`/`);
+      }
+      vm.groupObj = (await vm.$http.get(encodeURI(`/api/${vm.groupId}`))).body;
+      vm.socket = io({ query: { groupId: vm.groupId } });
+      vm.socket.on("re", async () => {
+        vm.groupObj = (await vm.$http.get(
+          encodeURI(`/api/${vm.groupId}`),
+        )).body;
+      });
     },
     groupObj() {
       this.$nextTick(() => {
@@ -259,20 +271,19 @@ export default {
     }
     vm.groupObj = (await vm.$http.get(encodeURI(`/api/${vm.groupId}`))).body;
     vm.socket = io({ query: { groupId: vm.groupId } });
-    vm.socket.on("re", async (data) => {
+    vm.socket.on("re", async () => {
       vm.groupObj = (await vm.$http.get(encodeURI(`/api/${vm.groupId}`))).body;
     });
-    console.log(vm.socket);
   },
   destroyed() {
     clearInterval(this.timer);
+    this.socket.close();
   },
   methods: {
     setTimer: function() {
       let vm = this;
       vm.timer = setInterval(() => {
         vm.timenow = Date.now();
-        console.log(vm.timenow - vm.lastupdateTime);
       }, 17);
     },
   },
