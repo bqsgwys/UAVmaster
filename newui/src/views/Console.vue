@@ -28,6 +28,7 @@
               text
               width="90%"
               style="margin:5px;font-size: 1.2em;"
+              @click="doneReady"
               >准备</v-btn
             >
             <v-btn
@@ -35,6 +36,7 @@
               text
               width="90%"
               style="margin:5px;font-size: 1.2em;"
+              @click="doneTakeoff"
               >起飞</v-btn
             >
             <v-btn
@@ -98,6 +100,7 @@
               style="margin:5px;font-size: 1.2em;"
               text
               width="90%"
+              @click="doneDone"
             >
               降落
             </v-btn>
@@ -108,6 +111,7 @@
               style="margin:5px;font-size: 1.2em;"
               text
               width="90%"
+              @click="doneCrush"
             >
               碰撞{{ crush.length }}次
             </v-btn>
@@ -125,16 +129,18 @@
             <div
               class="main-title"
               large
-              style="color: #E0F7FA;text-shadow:#E0F7FA 0px 0px 5px; position: relative;font-family:DSEG;"
+              style="color: #E0F7FA;text-shadow:#E0F7FA 0px 0px 5px; position: relative;line-height: initial;"
             >
-              {{ status }}
+              <span>{{ status }}</span>
               <br />
-              {{
+              <span style="font-family:DSEG;">{{
                 (timenow - (lastupdateTime ? lastupdateTime : timenow))
                   | date("mm:ss. SSS")
-              }}
+              }}</span>
               <br />
-              {{ totScore }}
+              <span style="font-family:DSEG;">
+                {{ totScore }}
+              </span>
             </div>
           </v-card>
           <v-spacer />
@@ -203,11 +209,12 @@ export default {
     seenTar3: 0,
     crush: [],
     done: false,
+    doneTime: 0,
     Firepos: 0,
     Tar1pos: 0,
     Tar2pos: 0,
     Tar3pos: 0,
-    status: "READY",
+    status: "PREPARING",
     lastupdateTime: 0,
     totScore: 0,
     groupList: [],
@@ -242,21 +249,48 @@ export default {
         vm.Tar3pos = vm.groupObj.mission.Tar3;
         vm.group = vm.groupObj.name;
         vm.ready = vm.groupObj.ready.finish;
+        vm.done = vm.groupObj.done.finish;
         vm.lastupdateTime = 0;
-        if (vm.ready) vm.lastupdateTime = vm.groupObj.ready.time;
+        if (vm.ready) {
+          vm.lastupdateTime = vm.groupObj.ready.time;
+          vm.status = "PREPARING";
+        }
         vm.takeoff = vm.groupObj.takeoff.finish;
-        if (vm.takeoff) vm.lastupdateTime = vm.groupObj.takeoff.time;
+        if (vm.takeoff) {
+          vm.lastupdateTime = vm.groupObj.takeoff.time;
+          vm.status = "TAKEN OFF";
+        }
         vm.seenFire = vm.groupObj.seenFire.finish;
-        if (vm.seenFire) vm.seenFire += vm.groupObj.seenFire.correct;
+        if (vm.seenFire) {
+          vm.seenFire += vm.groupObj.seenFire.correct;
+          vm.status = "SEEN FIRE";
+          if (!vm.groupObj.seenFire.correct) vm.status = "WRONG FIRE POS";
+        }
         vm.seenTar1 = vm.groupObj.seenTar1.finish;
-        if (vm.seenTar1) vm.seenTar1 += vm.groupObj.seenTar1.correct;
+        if (vm.seenTar1) {
+          vm.seenTar1 += vm.groupObj.seenTar1.correct;
+          vm.status = "SEEN TARGET 1";
+          if (!vm.groupObj.seenTar1.correct) vm.status = "WRONG TARGET 3";
+        }
         vm.seenTar2 = vm.groupObj.seenTar2.finish;
-        if (vm.seenTar2) vm.seenTar2 += vm.groupObj.seenTar2.correct;
+        if (vm.seenTar2) {
+          vm.seenTar2 += vm.groupObj.seenTar2.correct;
+          vm.status = "SEEN TARGET 2";
+          if (!vm.groupObj.seenTar2.correct) vm.status = "WRONG TARGET 2";
+        }
         vm.seenTar3 = vm.groupObj.seenTar3.finish;
-        if (vm.seenTar3) vm.seenTar3 += vm.groupObj.seenTar3.correct;
+        if (vm.seenTar3) {
+          vm.seenTar3 += vm.groupObj.seenTar3.correct;
+          vm.status = "SEEN TARGET 3";
+          if (!vm.groupObj.seenTar3.correct) vm.status = "WRONG TARGET 3";
+        }
         vm.crush = vm.groupObj.crush;
         clearInterval(vm.timer);
-        vm.setTimer();
+        if (vm.done) {
+          vm.timenow = vm.groupObj.done.time;
+          vm.status = "DONE";
+        }
+        if (!vm.done) vm.setTimer();
       });
     },
   },
@@ -285,6 +319,18 @@ export default {
       vm.timer = setInterval(() => {
         vm.timenow = Date.now();
       }, 17);
+    },
+    doneReady() {
+      this.$http.get(encodeURI(`/api/ready/${this.groupId}`));
+    },
+    doneTakeoff() {
+      this.$http.get(encodeURI(`/api/takeoff/${this.groupId}`));
+    },
+    doneDone() {
+      this.$http.get(encodeURI(`/api/done/${this.groupId}`));
+    },
+    doneCrush() {
+      this.$http.get(encodeURI(`/api/crush/${this.groupId}`));
     },
   },
 };
