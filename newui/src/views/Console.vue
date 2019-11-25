@@ -233,6 +233,7 @@ export default {
       "5": "危险品",
     },
     deltaT: -1,
+    end: 0,
   }),
   created() {},
   watch: {
@@ -285,12 +286,17 @@ export default {
           if (!vm.groupObj.seenTar3.correct) vm.status = "WRONG TARGET 3";
         }
         vm.crush = vm.groupObj.crush;
+        vm.end = vm.groupObj.end;
         clearInterval(vm.timer);
+        if (vm.end) {
+          vm.timenow = vm.end;
+          vm.status = "EXIT";
+        }
         if (vm.done) {
           vm.timenow = vm.groupObj.done.time;
           vm.status = "DONE";
         }
-        if (!vm.done) vm.setTimer();
+        if (!vm.done && !vm.end) vm.setTimer();
       });
     },
   },
@@ -307,7 +313,7 @@ export default {
     vm.socket = io({ query: { groupId: vm.groupId } });
     vm.socket.on("re", async (data) => {
       vm.groupObj = (await vm.$http.get(encodeURI(`/api/${vm.groupId}`))).body;
-      vm.deltaT = data *1 - Date.now();
+      vm.deltaT = data * 1 - Date.now();
     });
   },
   destroyed() {
