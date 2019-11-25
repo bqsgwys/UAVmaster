@@ -29,7 +29,7 @@ try {
           if (this.timer == 0) {
             this.pub = nh.advertise(`/${g}/received`, 'std_msgs/Int16');
             this.pub.publish({
-              data: true
+              data: 1
             });
             this.target1 = nh.advertise(`/${g}/target1`, 'std_msgs/Int16');
             this.target1.publish({
@@ -45,7 +45,7 @@ try {
             });
             this.timer = setInterval(() => {
               this.pub.publish({
-                data: true
+                data: 1
               });
               this.target1.publish({
                 data: this.aim[0]

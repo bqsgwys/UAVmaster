@@ -16,9 +16,9 @@ const scoring = (g) => {
   g.score = 0;
   if (g.takeoff.finish) g.score += 10;
   if (g.seenFire.finish) g.score += 20;
-  if (g.seenTar1.finish && g.seenTar1.corrent) g.score += 20;
-  if (g.seenTar2.finish && g.seenTar2.corrent) g.score += 20;
-  if (g.seenTar3.finish && g.seenTar3.corrent) g.score += 20;
+  if (g.seenTar1.finish && g.seenTar1.correct) g.score += 20;
+  if (g.seenTar2.finish && g.seenTar2.correct) g.score += 20;
+  if (g.seenTar3.finish && g.seenTar3.correct) g.score += 20;
   if (g.done.finish) g.score += 10;
 }
 module.exports.scoring = scoring;
