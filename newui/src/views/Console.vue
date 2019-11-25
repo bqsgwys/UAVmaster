@@ -148,7 +148,7 @@
                   style="width:95%;height:100%;font-size:2em;font-weight:800;opacity:0.8;"
                   @click="fireHide = 0"
                 >
-                  火点 <br />{{ fireHide ? "秘密" : Firepos }}
+                  火点 <br />{{ fireHide ? "隐藏" : Firepos }}
                 </v-btn>
               </v-col>
               <v-col cols="12" sm="3" style="height:100%;">
@@ -159,11 +159,11 @@
                 >
                   {{
                     tar1Hide
-                      ? "秘密"
+                      ? "隐藏"
                       : !aims
                       ? "目标物体一"
                       : targetName[`${aims[0]}`]
-                  }}<br />{{ tar1Hide ? "秘密" : Tar1pos }}
+                  }}<br />{{ tar1Hide ? "隐藏" : Tar1pos }}
                 </v-btn>
               </v-col>
               <v-col cols="12" sm="3" style="height:100%;">
@@ -174,11 +174,11 @@
                 >
                   {{
                     tar2Hide
-                      ? "秘密"
+                      ? "隐藏"
                       : !aims
                       ? "目标物体二"
                       : targetName[`${aims[1]}`]
-                  }}<br />{{ tar2Hide ? "秘密" : Tar2pos }}
+                  }}<br />{{ tar2Hide ? "隐藏" : Tar2pos }}
                 </v-btn>
               </v-col>
               <v-col cols="12" sm="3" style="height:100%;">
@@ -189,11 +189,11 @@
                 >
                   {{
                     tar3Hide
-                      ? "秘密"
+                      ? "隐藏"
                       : !aims
                       ? "目标物体三"
                       : targetName[`${aims[2]}`]
-                  }}<br />{{ tar3Hide ? "秘密" : Tar3pos }}
+                  }}<br />{{ tar3Hide ? "隐藏" : Tar3pos }}
                 </v-btn>
               </v-col>
             </v-row>
