@@ -38,13 +38,7 @@
               >起飞</v-btn
             >
             <v-btn
-              :class="
-                seenFire
-                  ? seenFire == 1
-                    ? 'red darken-2'
-                    : 'light-green darken-2'
-                  : 'light-blue darken-2'
-              "
+              :class="seenFire ? 'light-green darken-2' : 'light-blue darken-2'"
               style="margin:5px;font-size: 1.2em;"
               text
               width="90%"
