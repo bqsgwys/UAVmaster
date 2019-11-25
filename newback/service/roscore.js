@@ -99,7 +99,8 @@ try {
     nh() {},
     gp() {
       return ({
-        init() {}
+        init() {},
+        end() {}
       })
     }
   }

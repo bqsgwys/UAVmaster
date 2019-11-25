@@ -19,9 +19,9 @@ const {
 module.exports.gen = gen;
 module.exports.ready = ready;
 module.exports.scoring = scoring;
-module.checkAlive = async (group) => {
+module.exports.checkAlive = async (group) => {
   let g = (await db[group])
-  return !g.exit;
+  return !(g.end);
 }
 
 module.exports.takeoff = async (group) => {
@@ -93,7 +93,6 @@ module.exports.done = async (group) => {
   if (!g.done.finish) {
     g.done.finish = true;
     g.done.time = Date.now();
-    g.ros.end();
     scoring(g);
     await (db[group] = g)
     await exit(group);

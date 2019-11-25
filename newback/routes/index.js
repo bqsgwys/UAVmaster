@@ -3,7 +3,9 @@ const player = require('../service/player')
 router.prefix("/api")
 const checkAlive = async (ctx, next) => {
   let id = ctx.params.userId;
-  if (await player.checkAlive(id)) return next();
+  if (await player.checkAlive(id)) {
+    return next();
+  } 
   return ctx.body = "failed";
 }
 router.get('/gen/:userId/:userName', async (ctx, next) => {
