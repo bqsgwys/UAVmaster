@@ -22,8 +22,8 @@
               width: '90%',
               margin: '5px 0',
               fontSize: '1.5em',
-              height:`calc( 80vh / ${Math.ceil(groupAllList.length / 4)})`,
-              opacity:0.85
+              height: `calc( 80vh / ${Math.ceil(groupAllList.length / 4)})`,
+              opacity: 0.85
             }"
             @click="$router.push(`/console/${pl.id}`)"
             >{{ pl.id }}:{{ pl.name }}</v-btn
@@ -41,7 +41,7 @@ export default {
   data: () => ({
     groupList: [],
     groupAllList: [],
-    Logo: "",
+    Logo: ""
   }),
   created() {
     this.Logo = Logo;
@@ -49,20 +49,20 @@ export default {
   watch: {
     $route() {
       // 对路由变化作出响应...
-    },
+    }
   },
   computed: {},
   async mounted() {
     let vm = this;
     vm.groupList = (await vm.$http.get(encodeURI(`/api/list`))).body;
     vm.groupAllList = await Promise.all(
-      vm.groupList.map(async (item) => {
+      vm.groupList.map(async item => {
         return await (await vm.$http.get(encodeURI(`/api/${item}`))).body;
-      }),
+      })
     );
   },
   destroyed() {},
-  methods: {},
+  methods: {}
 };
 </script>
 

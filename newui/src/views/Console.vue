@@ -230,10 +230,10 @@ export default {
       "2": "文件",
       "3": "画作",
       "4": "婴儿",
-      "5": "危险品",
+      "5": "危险品"
     },
     deltaT: -1,
-    end: 0,
+    end: 0
   }),
   created() {},
   watch: {
@@ -262,11 +262,8 @@ export default {
           vm.status = "TAKEN OFF";
         }
         vm.seenFire = vm.groupObj.seenFire.finish;
-        if (vm.seenFire) {
-          vm.seenFire += vm.groupObj.seenFire.correct;
-          vm.status = "SEEN FIRE";
-          if (!vm.groupObj.seenFire.correct) vm.status = "WRONG FIRE POS";
-        }
+        if (vm.seenFire) vm.status = "SEEN FIRE";
+
         vm.seenTar1 = vm.groupObj.seenTar1.finish;
         if (vm.seenTar1) {
           vm.seenTar1 += vm.groupObj.seenTar1.correct;
@@ -287,6 +284,7 @@ export default {
         }
         vm.crush = vm.groupObj.crush;
         vm.end = vm.groupObj.end;
+        vm.totScore = vm.groupObj.score;
         clearInterval(vm.timer);
         if (vm.end) {
           vm.timenow = vm.end;
@@ -298,7 +296,7 @@ export default {
         }
         if (!vm.done && !vm.end) vm.setTimer();
       });
-    },
+    }
   },
   computed: {},
   async mounted() {
@@ -311,7 +309,7 @@ export default {
     }
     vm.groupObj = (await vm.$http.get(encodeURI(`/api/${vm.groupId}`))).body;
     vm.socket = io({ query: { groupId: vm.groupId } });
-    vm.socket.on("re", async (data) => {
+    vm.socket.on("re", async data => {
       vm.groupObj = (await vm.$http.get(encodeURI(`/api/${vm.groupId}`))).body;
       vm.deltaT = data * 1 - Date.now();
     });
@@ -338,8 +336,8 @@ export default {
     },
     doneCrush() {
       this.$http.get(encodeURI(`/api/crush/${this.groupId}`));
-    },
-  },
+    }
+  }
 };
 </script>
 
