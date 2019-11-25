@@ -60,7 +60,7 @@ router.get('/done/:userId/', checkAlive, async (ctx, next) => {
   return ctx.body = "success";
 })
 
-router.get('/crush/:userId/', async (ctx, next) => {
+router.get('/crush/:userId/', checkAlive,  async (ctx, next) => {
   let id = ctx.params.userId;
   await player.crush(id);
   return ctx.body = "success";
