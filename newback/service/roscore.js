@@ -44,7 +44,7 @@ try {
               data: this.aim[2]
             });
             this.timer = setInterval(() => {
-              pub.publish({
+              this.pub.publish({
                 data: true
               });
               this.target1.publish({
