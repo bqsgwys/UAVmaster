@@ -14,7 +14,7 @@ try {
   const gp = (g, gaim) => ({
     id: g,
     timer: 0,
-    aim: gaim.missions.aims,
+    aim: gaim.mission.aims,
     start: 0,
     end() {
       if (start) {
