@@ -14,9 +14,7 @@
                   </h2>
                 </v-list-item-title>
                 <v-list-item-subtitle>
-                  <h2>
-                    {{ groupId }}
-                  </h2>
+                  <h2>{{ groupId }}</h2>
                 </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
@@ -164,7 +162,9 @@
                   class="orange darken-2"
                   style="width:95%;height:100%;font-size:2em;font-weight:800;opacity:0.8;"
                 >
-                  目标物体1<br />{{ Tar1pos }}
+                  {{ !aims ? "目标物体一" : targetName[`${aims[0]}`] }}<br />{{
+                    Tar1pos
+                  }}
                 </v-btn>
               </v-col>
               <v-col cols="12" sm="3" style="height:100%;">
@@ -172,7 +172,9 @@
                   class="lime darken-2"
                   style="width:95%;height:100%;font-size:2em;font-weight:800;opacity:0.8;"
                 >
-                  目标物体2<br />{{ Tar2pos }}
+                  {{ !aims ? "目标物体二" : targetName[`${aims[1]}`] }}<br />{{
+                    Tar2pos
+                  }}
                 </v-btn>
               </v-col>
               <v-col cols="12" sm="3" style="height:100%;">
@@ -180,7 +182,9 @@
                   class="blue darken-2"
                   style="width:95%;height:100%;font-size:2em;font-weight:800;opacity:0.8;"
                 >
-                  目标物体3<br />{{ Tar3pos }}
+                  {{ !aims ? "目标物体三" : targetName[`${aims[2]}`] }}<br />{{
+                    Tar3pos
+                  }}
                 </v-btn>
               </v-col>
             </v-row>
@@ -196,6 +200,7 @@ import io from "socket.io-client";
 export default {
   components: {},
   data: () => ({
+    ret: {},
     socket: {},
     timenow: 0,
     timer: null,
@@ -219,26 +224,20 @@ export default {
     totScore: 0,
     groupList: [],
     groupObj: {},
+    aims: [],
+    targetName: {
+      "1": "猫",
+      "2": "文件",
+      "3": "画作",
+      "4": "婴儿",
+      "5": "危险品",
+    },
+    deltaT: -1,
   }),
   created() {},
   watch: {
     async $route() {
       // 对路由变化作出响应...
-      let vm = this;
-      vm.groupId = vm.$route.params.group;
-      vm.socket.close();
-      vm.groupId = vm.$route.params.group;
-      vm.groupList = (await vm.$http.get(encodeURI(`/api/list`))).body;
-      if (vm.groupList.indexOf(vm.groupId) == -1) {
-        vm.$router.push(`/`);
-      }
-      vm.groupObj = (await vm.$http.get(encodeURI(`/api/${vm.groupId}`))).body;
-      vm.socket = io({ query: { groupId: vm.groupId } });
-      vm.socket.on("re", async () => {
-        vm.groupObj = (await vm.$http.get(
-          encodeURI(`/api/${vm.groupId}`),
-        )).body;
-      });
     },
     groupObj() {
       this.$nextTick(() => {
@@ -247,6 +246,7 @@ export default {
         vm.Tar1pos = vm.groupObj.mission.Tar1;
         vm.Tar2pos = vm.groupObj.mission.Tar2;
         vm.Tar3pos = vm.groupObj.mission.Tar3;
+        vm.aims = vm.groupObj.mission.aims;
         vm.group = vm.groupObj.name;
         vm.ready = vm.groupObj.ready.finish;
         vm.done = vm.groupObj.done.finish;
@@ -305,8 +305,9 @@ export default {
     }
     vm.groupObj = (await vm.$http.get(encodeURI(`/api/${vm.groupId}`))).body;
     vm.socket = io({ query: { groupId: vm.groupId } });
-    vm.socket.on("re", async () => {
+    vm.socket.on("re", async (data) => {
       vm.groupObj = (await vm.$http.get(encodeURI(`/api/${vm.groupId}`))).body;
+      vm.deltaT = data *1 - Date.now();
     });
   },
   destroyed() {
@@ -317,7 +318,7 @@ export default {
     setTimer: function() {
       let vm = this;
       vm.timer = setInterval(() => {
-        vm.timenow = Date.now();
+        vm.timenow = Date.now() + vm.deltaT;
       }, 17);
     },
     doneReady() {

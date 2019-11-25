@@ -5,9 +5,10 @@ const checkAlive = async (ctx, next) => {
   let id = ctx.params.userId;
   if (await player.checkAlive(id)) {
     return next();
-  } 
+  }
   return ctx.body = "failed";
 }
+
 router.get('/gen/:userId/:userName', async (ctx, next) => {
   let id = ctx.params.userId;
   let name = ctx.params.userName;

@@ -66,6 +66,6 @@ module.exports.exit = async (group) => {
     list[`${group}`].end();
   let g = (await db[group])
   g.end = Date.now();
-  console.log(g.end);
   await (db[group] = g)
+  return;
 }

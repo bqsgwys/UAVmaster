@@ -54,6 +54,7 @@ module.exports.seenTar1 = async (group, Tar1) => {
     g.seenTar1.correct = (`${Tar1}` == g.mission.Tar1)
     scoring(g);
     await (db[group] = g);
+    console.log(1);
     if (!g.seenTar1.correct)
       await exit(group);
     say(group);
@@ -68,6 +69,7 @@ module.exports.seenTar2 = async (group, Tar2) => {
     g.seenTar2.correct = (`${Tar2}` == g.mission.Tar2)
     scoring(g);
     await (db[group] = g)
+    console.log(1);
     if (!g.seenTar2.correct)
       await exit(group);
     say(group);
@@ -82,6 +84,7 @@ module.exports.seenTar3 = async (group, Tar3) => {
     g.seenTar3.correct = (`${Tar3}` == g.mission.Tar3)
     scoring(g);
     await (db[group] = g)
+    console.log(1);
     if (!g.seenTar3.correct)
       await exit(group);
     say(group);
@@ -95,6 +98,7 @@ module.exports.done = async (group) => {
     g.done.time = Date.now();
     scoring(g);
     await (db[group] = g)
+    console.log(1);
     await exit(group);
     say(group);
   }
