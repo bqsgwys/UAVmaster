@@ -54,7 +54,7 @@ try {
                 data: this.aim[1]
               });
               this.target3.publish({
-                data: this.aims[2]
+                data: this.aim[2]
               });
             }, 2000);
           }
