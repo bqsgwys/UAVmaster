@@ -5,16 +5,23 @@ const {
 const {
   say
 } = require("./ws")
+const {
+  gen,
+  ready,
+  exit,
+  scoring
+} = require("./utils")
+const {
+  nh
+} = require("./roscore")
 
 
-module.exports.ready = async (group) => {
+module.exports.gen = gen;
+module.exports.ready = ready;
+module.exports.scoring = scoring;
+module.checkAlive = async (group) => {
   let g = (await db[group])
-  if (!g.ready.finish) {
-    g.ready.finish = true;
-    g.ready.time = Date.now();
-    await (db[group] = g)
-    say(group);
-  }
+  return !g.exit;
 }
 
 module.exports.takeoff = async (group) => {
@@ -22,17 +29,18 @@ module.exports.takeoff = async (group) => {
   if (!g.takeoff.finish) {
     g.takeoff.finish = true;
     g.takeoff.time = Date.now();
+    scoring(g);
     await (db[group] = g)
     say(group);
   }
 }
 
-module.exports.seenFire = async (group, pos) => {
+module.exports.seenFire = async (group) => {
   let g = (await db[group])
   if (!g.seenFire.finish) {
     g.seenFire.finish = true;
     g.seenFire.time = Date.now();
-    g.seenFire.correct = (`${pos}` == g.mission.Fire)
+    scoring(g);
     await (db[group] = g)
     say(group);
   }
@@ -44,7 +52,10 @@ module.exports.seenTar1 = async (group, Tar1) => {
     g.seenTar1.finish = true;
     g.seenTar1.time = Date.now();
     g.seenTar1.correct = (`${Tar1}` == g.mission.Tar1)
-    await (db[group] = g)
+    scoring(g);
+    await (db[group] = g);
+    if (!g.seenTar1.correct)
+      await exit(group);
     say(group);
   }
 }
@@ -55,7 +66,10 @@ module.exports.seenTar2 = async (group, Tar2) => {
     g.seenTar2.finish = true;
     g.seenTar2.time = Date.now();
     g.seenTar2.correct = (`${Tar2}` == g.mission.Tar2)
+    scoring(g);
     await (db[group] = g)
+    if (!g.seenTar2.correct)
+      await exit(group);
     say(group);
   }
 }
@@ -66,7 +80,10 @@ module.exports.seenTar3 = async (group, Tar3) => {
     g.seenTar3.finish = true;
     g.seenTar3.time = Date.now();
     g.seenTar3.correct = (`${Tar3}` == g.mission.Tar3)
+    scoring(g);
     await (db[group] = g)
+    if (!g.seenTar3.correct)
+      await exit(group);
     say(group);
   }
 }
@@ -76,14 +93,17 @@ module.exports.done = async (group) => {
   if (!g.done.finish) {
     g.done.finish = true;
     g.done.time = Date.now();
+    g.ros.end();
+    scoring(g);
     await (db[group] = g)
+    await exit(group);
     say(group);
   }
 }
-
 module.exports.crush = async (group) => {
   let g = (await db[group])
   g.crush.push(Date.now())
+  scoring(g);
   await (db[group] = g)
   say(group);
 }

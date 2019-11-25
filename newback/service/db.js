@@ -11,8 +11,10 @@ db.find = (key) => new Promise((res, rej) => {
 })
 
 const template = {
+  end: 0,
   name: "",
   id: 0,
+  score: 0,
   ready: {
     finish: false,
     time: 0,
@@ -23,7 +25,6 @@ const template = {
   },
   seenFire: {
     finish: false,
-    correct: false,
     time: 0,
   },
   seenTar1: {
@@ -47,6 +48,7 @@ const template = {
   },
   crush: [],
   mission: {
+    aims: [0, 0, 0],
     Fire: 0,
     Tar1: 0,
     Tar2: 0,

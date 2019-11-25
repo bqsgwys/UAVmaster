@@ -19,10 +19,12 @@ Array.prototype.shuffle = function (n = this.length) {
   return this;
 }
 const genmission = () => {
-  let f = position.random();
+  let k = position.random();
   let [a, b, c, d, e] = [1, 2, 3, 4, 5].shuffle();
+  let [f, g, h, i, j] = [1, 2, 3, 4, 5].shuffle();
   return {
-    Fire: f,
+    aims: [f, g, h],
+    Fire: k,
     Tar1: a,
     Tar2: b,
     Tar3: c

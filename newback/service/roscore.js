@@ -11,50 +11,82 @@ try {
     }
   }
   rosnodejs.initNode("judger")
-  const gp = (g) => ({
+  const gp = (g, gaim) => ({
     id: g,
     timer: 0,
+    aim: gaim.missions.aims,
+    start: 0,
+    end() {
+      if (start) {
+        this.takeoff.shutdown();
+        this.seenfire.shutdown();
+        this.seenTar1.shutdown();
+        this.seenTar2.shutdown();
+        this.seenTar3.shutdown();
+        this.done.shutdown();
+        clearInterval(this.timer);
+      }
+    },
     init(nh) {
-      nh.subscribe(`/${g}/ready`, 'std_msgs/Bool', (msg) => {
-        console.log(`${g}Should be ready as ${msg.data}`);
-        if (msg.data) player.ready(g);
-      });
-      nh.subscribe(`/${g}/takeoff`, 'std_msgs/Bool', (msg) => {
+      this.start = 1;
+      this.takeoff = nh.subscribe(`/${g}/takeoff`, 'std_msgs/Int16', (msg) => {
         if (msg.data) {
+          this.aim = gaim.missions.aims;
           player.takeoff(g);
           if (this.timer == 0) {
-            let pub = nh.advertise(`/${g}/received`, 'std_msgs/Bool');
-            pub.publish({
+            this.pub = nh.advertise(`/${g}/received`, 'std_msgs/Int16');
+            this.pub.publish({
               data: true
+            });
+            this.target1 = nh.advertise(`/${g}/target1`, 'std_msgs/Int16');
+            this.target1.publish({
+              data: this.aim[0]
+            });
+            this.target2 = nh.advertise(`/${g}/target2`, 'std_msgs/Int16');
+            this.target2.publish({
+              data: this.aim[1]
+            });
+            this.target3 = nh.advertise(`/${g}/target3`, 'std_msgs/Int16');
+            this.target3.publish({
+              data: this.aim[2]
             });
             this.timer = setInterval(() => {
               pub.publish({
                 data: true
+              });
+              this.target1.publish({
+                data: this.aim[0]
+              });
+              this.target2.publish({
+                data: this.aim[1]
+              });
+              this.target3.publish({
+                data: this.aims[2]
               });
             }, 2000);
           }
         }
 
       });
-      nh.subscribe(`/${g}/seenFire`, 'std_msgs/Int16', (msg) => {
-        if (msg.data) player.seenFire(g, msg.data);
+      this.seenfire = nh.subscribe(`/${g}/seenfire`, 'std_msgs/Int16', (msg) => {
+        if (msg.data) player.seenFire(g);
       });
-      nh.subscribe(`/${g}/seenTar1`, 'std_msgs/Int16', (msg) => {
+      this.seenTar1 = nh.subscribe(`/${g}/seentarget1`, 'std_msgs/Int16', (msg) => {
         if (msg.data) player.seenTar1(g, msg.data);
       });
-      nh.subscribe(`/${g}/seenTar2`, 'std_msgs/Int16', (msg) => {
+      this.seenTar2 = nh.subscribe(`/${g}/seentarget2`, 'std_msgs/Int16', (msg) => {
         if (msg.data) player.seenTar2(g, msg.data);
       });
-      nh.subscribe(`/${g}/seenTar3`, 'std_msgs/Int16', (msg) => {
+      this.seenTar3 = nh.subscribe(`/${g}/seentarget3`, 'std_msgs/Int16', (msg) => {
         if (msg.data) player.seenTar3(g, msg.data);
       });
-      nh.subscribe(`/${g}/done`, 'std_msgs/Bool', (msg) => {
+      this.done = nh.subscribe(`/${g}/done`, 'std_msgs/Int16', (msg) => {
         if (msg.data) {
           player.done(g, msg.data);
           clearInterval(this.timer);
         }
       });
-    }
+    },
   })
   initros();
   module.exports = {
