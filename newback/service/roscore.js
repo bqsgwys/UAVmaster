@@ -10,7 +10,7 @@ try {
     aim: gaim.mission.aims,
     start: 0,
     end() {
-      if (start) {
+      if (this.start) {
         this.takeoff.shutdown();
         this.seenfire.shutdown();
         this.seenTar1.shutdown();
