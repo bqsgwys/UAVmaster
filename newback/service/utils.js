@@ -20,6 +20,7 @@ const scoring = (g) => {
   if (g.seenTar2.finish && g.seenTar2.correct) g.score += 20;
   if (g.seenTar3.finish && g.seenTar3.correct) g.score += 20;
   if (g.done.finish) g.score += 10;
+  g.score += -2*(g.crush.length)
 }
 module.exports.scoring = scoring;
 
