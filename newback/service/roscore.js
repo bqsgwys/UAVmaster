@@ -1,10 +1,8 @@
 try {
   const rosnodejs = require('rosnodejs');
+  rosnodejs.initNode("judger");
   const player = require("./player");
   const db = require("./db");
-  const initros = async () => {
-    let nh = await rosnodejs.initNode("judger");
-  }
   rosnodejs.initNode("judger")
   const gp = (g, gaim) => ({
     id: g,
@@ -83,7 +81,6 @@ try {
       });
     },
   })
-  initros();
   module.exports = {
     nh: rosnodejs.nh,
     gp
