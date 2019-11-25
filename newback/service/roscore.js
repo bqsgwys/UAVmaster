@@ -24,7 +24,7 @@ try {
       this.start = 1;
       this.takeoff = nh.subscribe(`/${g}/takeoff`, 'std_msgs/Int16', (msg) => {
         if (msg.data) {
-          this.aim = gaim.missions.aims;
+          this.aim = gaim.mission.aims;
           player.takeoff(g);
           if (this.timer == 0) {
             this.pub = nh.advertise(`/${g}/received`, 'std_msgs/Int16');
