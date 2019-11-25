@@ -96,7 +96,6 @@
             >
               降落
             </v-btn>
-
             <v-card-title>失误</v-card-title>
             <v-btn
               :class="crush.length ? 'red darken-2' : 'light-green darken-2'"
@@ -147,38 +146,54 @@
                 <v-btn
                   class="red darken-2"
                   style="width:95%;height:100%;font-size:2em;font-weight:800;opacity:0.8;"
+                  @click="fireHide = 0"
                 >
-                  火点<br />{{ Firepos }}
+                  火点 <br />{{ fireHide ? "秘密" : Firepos }}
                 </v-btn>
               </v-col>
               <v-col cols="12" sm="3" style="height:100%;">
                 <v-btn
                   class="orange darken-2"
                   style="width:95%;height:100%;font-size:2em;font-weight:800;opacity:0.8;"
+                  @click="tar1Hide = 0"
                 >
-                  {{ !aims ? "目标物体一" : targetName[`${aims[0]}`] }}<br />{{
-                    Tar1pos
-                  }}
+                  {{
+                    tar1Hide
+                      ? "秘密"
+                      : !aims
+                      ? "目标物体一"
+                      : targetName[`${aims[0]}`]
+                  }}<br />{{ tar1Hide ? "秘密" : Tar1pos }}
                 </v-btn>
               </v-col>
               <v-col cols="12" sm="3" style="height:100%;">
                 <v-btn
                   class="lime darken-2"
                   style="width:95%;height:100%;font-size:2em;font-weight:800;opacity:0.8;"
+                  @click="tar2Hide = 0"
                 >
-                  {{ !aims ? "目标物体二" : targetName[`${aims[1]}`] }}<br />{{
-                    Tar2pos
-                  }}
+                  {{
+                    tar2Hide
+                      ? "秘密"
+                      : !aims
+                      ? "目标物体二"
+                      : targetName[`${aims[1]}`]
+                  }}<br />{{ tar2Hide ? "秘密" : Tar2pos }}
                 </v-btn>
               </v-col>
               <v-col cols="12" sm="3" style="height:100%;">
                 <v-btn
                   class="blue darken-2"
                   style="width:95%;height:100%;font-size:2em;font-weight:800;opacity:0.8;"
+                  @click="tar3Hide = 0"
                 >
-                  {{ !aims ? "目标物体三" : targetName[`${aims[2]}`] }}<br />{{
-                    Tar3pos
-                  }}
+                  {{
+                    tar3Hide
+                      ? "秘密"
+                      : !aims
+                      ? "目标物体三"
+                      : targetName[`${aims[2]}`]
+                  }}<br />{{ tar3Hide ? "秘密" : Tar3pos }}
                 </v-btn>
               </v-col>
             </v-row>
@@ -197,6 +212,10 @@ export default {
     ret: {},
     socket: {},
     timenow: 0,
+    fireHide: true,
+    tar1Hide: true,
+    tar2Hide: true,
+    tar3Hide: true,
     timer: null,
     group: "我们很队",
     groupId: 1,
@@ -224,10 +243,10 @@ export default {
       "2": "文件",
       "3": "画作",
       "4": "婴儿",
-      "5": "危险品"
+      "5": "危险品",
     },
     deltaT: -1,
-    end: 0
+    end: 0,
   }),
   created() {},
   watch: {
@@ -290,7 +309,7 @@ export default {
         }
         if (!vm.done && !vm.end) vm.setTimer();
       });
-    }
+    },
   },
   computed: {},
   async mounted() {
@@ -303,7 +322,7 @@ export default {
     }
     vm.groupObj = (await vm.$http.get(encodeURI(`/api/${vm.groupId}`))).body;
     vm.socket = io({ query: { groupId: vm.groupId } });
-    vm.socket.on("re", async data => {
+    vm.socket.on("re", async (data) => {
       vm.groupObj = (await vm.$http.get(encodeURI(`/api/${vm.groupId}`))).body;
       vm.deltaT = data * 1 - Date.now();
     });
@@ -321,6 +340,7 @@ export default {
     },
     doneReady() {
       this.$http.get(encodeURI(`/api/ready/${this.groupId}`));
+      this.fireHide = this.tar1Hide = this.tar2Hide = this.tar3Hide = 1;
     },
     doneTakeoff() {
       this.$http.get(encodeURI(`/api/takeoff/${this.groupId}`));
@@ -330,8 +350,8 @@ export default {
     },
     doneCrush() {
       this.$http.get(encodeURI(`/api/crush/${this.groupId}`));
-    }
-  }
+    },
+  },
 };
 </script>
 
