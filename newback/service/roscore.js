@@ -1,14 +1,9 @@
 try {
-
   const rosnodejs = require('rosnodejs');
   const player = require("./player");
   const db = require("./db");
   const initros = async () => {
     let nh = await rosnodejs.initNode("judger");
-    let list = await db.list
-    for (x of list) {
-      gp(x).init(nh);
-    }
   }
   rosnodejs.initNode("judger")
   const gp = (g, gaim) => ({
