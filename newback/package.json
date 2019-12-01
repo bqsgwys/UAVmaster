@@ -21,6 +21,7 @@
     "koa-views": "^5.2.1",
     "level": "^6.0.0",
     "pug": "^2.0.0-rc.1",
+    "rosnodejs": "^3.0.1",
     "socket.io": "^2.3.0"
   },
   "devDependencies": {

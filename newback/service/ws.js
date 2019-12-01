@@ -14,7 +14,7 @@ io.on('connect', function (socket) {
 });
 
 function say(id) {
-  io.to(`${id}`).emit("re", "re");
+  io.to(`${id}`).emit("re", `${Date.now()}`);
 }
 module.exports = {
   io,
