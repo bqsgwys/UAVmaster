@@ -57,7 +57,7 @@ try {
         if (msg.data) {
           this.aim = gaim.mission.aims;
           player.takeoff(g);
-          if (this.timer == 0) {
+          if (!this.pub) {
             console.log('start')
             this.pub = nh.advertise(`/${g}/received`, 'std_msgs/Int16');
             this.pub.publish({
