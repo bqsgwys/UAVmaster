@@ -21,10 +21,10 @@ try {
           clearInterval(this.timer);
       }
     },
-    seen(index) {
+    seen(index,nh) {
       this[`receiveTarget${index}`] = nh.advertise(`/${g}/receivetarget${index}`, 'std_msgs/Int16');
     },
-    failure() {
+    failure(nh) {
       this.fail = nh.advertise(`/${g}/failure`, 'std_msgs/Int16');
       setTimeout(() => {
         this.end()

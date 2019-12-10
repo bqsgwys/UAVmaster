@@ -73,11 +73,11 @@ module.exports.exit = async (group) => {
 
 module.exports.seen = (group, target) => {
   if (list[`${group}`])
-    list[`${group}`].seen(target);
+    list[`${group}`].seen(target,nh);
 }
 module.exports.fail = async (group) => {
   if (list[`${group}`])
-    list[`${group}`].failure();
+    list[`${group}`].failure(nh);
   let g = (await db[group])
   g.end = Date.now();
   await (db[group] = g)
