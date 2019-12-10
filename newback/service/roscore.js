@@ -21,6 +21,15 @@ try {
           clearInterval(this.timer);
       }
     },
+    seen(index) {
+      this[`receiveTarget${index}`] = nh.advertise(`/${g}/receivetarget${index}`, 'std_msgs/Int16');
+    },
+    failure() {
+      this.fail = nh.advertise(`/${g}/failure`, 'std_msgs/Int16');
+      setTimeout(() => {
+        this.end()
+      }, 10000);
+    },
     init(nh) {
       this.start = 1;
       this.target1 = nh.advertise(`/${g}/target1`, 'std_msgs/Int16');
@@ -36,23 +45,43 @@ try {
         data: this.aim[2]
       });
       this.timer = setInterval(() => {
-        if (this.pub)
-          this.pub.publish({
-            data: 1
+        if (!this.fail) {
+          if (this.receiveTarget1)
+            this.receiveTarget1.publish({
+              data: 1
+            });
+          if (this.receiveTarget2)
+            this.receiveTarget2.publish({
+              data: 1
+            });
+          if (this.receiveTarget3)
+            this.receiveTarget3.publish({
+              data: 1
+            });
+          if (this.pub)
+            this.pub.publish({
+              data: 1
+            });
+          if (this.target1)
+            this.target1.publish({
+              data: this.aim[0]
+            });
+          if (this.target2)
+            this.target2.publish({
+              data: this.aim[1]
+            });
+          if (this.target3)
+            this.target3.publish({
+              data: this.aim[2]
+            });
+        } else {
+          this.fail.publish({
+            data: 1,
           });
-        if (this.target1)
-          this.target1.publish({
-            data: this.aim[0]
-          });
-        if (this.target2)
-          this.target2.publish({
-            data: this.aim[1]
-          });
-        if (this.target3)
-          this.target3.publish({
-            data: this.aim[2]
-          });
-      }, 2000);
+        }
+      }, 1000);
+
+
       this.takeoff = nh.subscribe(`/${g}/takeoff`, 'std_msgs/Int16', (msg) => {
         if (msg.data) {
           this.aim = gaim.mission.aims;
@@ -97,7 +126,9 @@ try {
     gp() {
       return ({
         init() {},
-        end() {}
+        end() {},
+        seen() {},
+        failure() {}
       })
     }
   }

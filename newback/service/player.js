@@ -9,7 +9,9 @@ const {
   gen,
   ready,
   exit,
-  scoring
+  scoring,
+  fail,
+  seen,
 } = require("./utils")
 const {
   nh
@@ -56,7 +58,9 @@ module.exports.seenTar1 = async (group, Tar1) => {
     await (db[group] = g);
     console.log(1);
     if (!g.seenTar1.correct)
-      await exit(group);
+      await fail(group);
+    else
+      seen(group, 1);
     say(group);
   }
 }
@@ -71,7 +75,9 @@ module.exports.seenTar2 = async (group, Tar2) => {
     await (db[group] = g)
     console.log(1);
     if (!g.seenTar2.correct)
-      await exit(group);
+      await fail(group);
+    else
+      seen(group, 2);
     say(group);
   }
 }
@@ -86,7 +92,9 @@ module.exports.seenTar3 = async (group, Tar3) => {
     await (db[group] = g)
     console.log(1);
     if (!g.seenTar3.correct)
-      await exit(group);
+      await fail(group);
+    else
+      seen(group, 3);
     say(group);
   }
 }

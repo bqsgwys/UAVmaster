@@ -20,7 +20,7 @@ const scoring = (g) => {
   if (g.seenTar2.finish && g.seenTar2.correct) g.score += 20;
   if (g.seenTar3.finish && g.seenTar3.correct) g.score += 20;
   if (g.done.finish) g.score += 10;
-  g.score += -2*(g.crush.length)
+  g.score += -2 * (g.crush.length)
 }
 module.exports.scoring = scoring;
 
@@ -69,4 +69,16 @@ module.exports.exit = async (group) => {
   g.end = Date.now();
   await (db[group] = g)
   return;
+}
+
+module.exports.seen = (group, target) => {
+  if (list[`${group}`])
+    list[`${group}`].seen(target);
+}
+module.exports.fail = async (group) => {
+  if (list[`${group}`])
+    list[`${group}`].failure();
+  let g = (await db[group])
+  g.end = Date.now();
+  await (db[group] = g)
 }
