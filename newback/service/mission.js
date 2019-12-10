@@ -1,4 +1,4 @@
-const position = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(x => `${x}`);
+const position = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(x => `${x}`);
 const target = [1, 2, 3, 4, 5].map(x => `${x}`);
 const targetName = {
   '1': "猫",
