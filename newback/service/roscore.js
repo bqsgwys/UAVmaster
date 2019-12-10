@@ -22,7 +22,7 @@ try {
       }
     },
     seen(index,nh) {
-      this[`receiveTarget${index}`] = nh.advertise(`/${g}/receivetarget${index}`, 'std_msgs/Int16');
+      this[`receiveTarget${index}`] = nh.advertise(`/${g}/receivedtarget${index}`, 'std_msgs/Int16');
     },
     failure(nh) {
       this.fail = nh.advertise(`/${g}/failure`, 'std_msgs/Int16');
