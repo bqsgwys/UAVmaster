@@ -14,7 +14,12 @@
                   </h2>
                 </v-list-item-title>
                 <v-list-item-subtitle>
-                  <h2>{{ groupId }}</h2>
+                  <h2>
+                    <span>
+                      {{ groupId }}
+                      <v-icon @click="refresh()">mdi-refresh</v-icon>
+                    </span>
+                  </h2>
                 </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
@@ -42,8 +47,9 @@
               style="margin:5px;font-size: 1.2em;"
               text
               width="90%"
+              @click="doneSeenFire"
             >
-              识别着火点
+              穿越着火点
             </v-btn>
             <v-btn
               :class="
@@ -56,6 +62,7 @@
               style="margin:5px;font-size: 1.2em;"
               text
               width="90%"
+              @click="doneTar1"
             >
               识别目标一
             </v-btn>
@@ -70,6 +77,7 @@
               style="margin:5px;font-size: 1.2em;"
               text
               width="90%"
+              @click="doneTar2"
             >
               识别目标二
             </v-btn>
@@ -84,6 +92,7 @@
               style="margin:5px;font-size: 1.2em;"
               text
               width="90%"
+              @click="doneTar3"
             >
               识别目标三
             </v-btn>
@@ -125,7 +134,9 @@
               <span>{{ status }}</span>
               <br />
               <span style="font-family:DSEG;">{{
-                (timenow - (lastupdateTime ? lastupdateTime : timenow))
+                (timenow -
+                  (lastupdateTime ? lastupdateTime : timenow) +
+                  crush.length * 15 * 1000)
                   | date("mm:ss. SSS")
               }}</span>
               <br />
@@ -145,8 +156,8 @@
               <v-col cols="12" sm="3" style="height:100%;">
                 <v-btn
                   class="red darken-2"
-                  style="width:95%;height:100%;font-size:2em;font-weight:800;opacity:0.8;"
-                  @click="fireHide = 0"
+                  style="width:95%;height:100%;font-size:1.8em;font-weight:800;opacity:0.8;"
+                  @click="fireHide = !fireHide"
                 >
                   火点 <br />{{ fireHide ? "隐藏" : Firepos }}
                 </v-btn>
@@ -154,8 +165,8 @@
               <v-col cols="12" sm="3" style="height:100%;">
                 <v-btn
                   class="orange darken-2"
-                  style="width:95%;height:100%;font-size:2em;font-weight:800;opacity:0.8;"
-                  @click="tar1Hide = 0"
+                  style="width:95%;height:100%;font-size:1.8em;font-weight:800;opacity:0.8;"
+                  @click="tar1Hide = !tar1Hide"
                 >
                   {{
                     tar1Hide
@@ -169,8 +180,8 @@
               <v-col cols="12" sm="3" style="height:100%;">
                 <v-btn
                   class="lime darken-2"
-                  style="width:95%;height:100%;font-size:2em;font-weight:800;opacity:0.8;"
-                  @click="tar2Hide = 0"
+                  style="width:95%;height:100%;font-size:1.8em;font-weight:800;opacity:0.8;"
+                  @click="tar2Hide = !tar2Hide"
                 >
                   {{
                     tar2Hide
@@ -184,8 +195,8 @@
               <v-col cols="12" sm="3" style="height:100%;">
                 <v-btn
                   class="blue darken-2"
-                  style="width:95%;height:100%;font-size:2em;font-weight:800;opacity:0.8;"
-                  @click="tar3Hide = 0"
+                  style="width:95%;height:100%;font-size:1.8em;font-weight:800;opacity:0.8;"
+                  @click="tar3Hide = !tar3Hide"
                 >
                   {{
                     tar3Hide
@@ -229,6 +240,9 @@ export default {
     tar1Hide: 1,
     tar2Hide: 1,
     tar3Hide: 1,
+    tar1: 1,
+    tar2: 1,
+    tar3: 1,
     crush: [],
     done: false,
     doneTime: 0,
@@ -236,7 +250,7 @@ export default {
     Tar1pos: 0,
     Tar2pos: 0,
     Tar3pos: 0,
-    status: "PREPARING",
+    status: "比赛即将开始",
     lastupdateTime: 0,
     totScore: 0,
     groupList: [],
@@ -264,6 +278,9 @@ export default {
         vm.Tar1pos = vm.groupObj.mission.Tar1;
         vm.Tar2pos = vm.groupObj.mission.Tar2;
         vm.Tar3pos = vm.groupObj.mission.Tar3;
+        vm.tar1 = vm.groupObj.mission.tar1;
+        vm.tar2 = vm.groupObj.mission.tar2;
+        vm.tar3 = vm.groupObj.mission.tar3;
         vm.aims = vm.groupObj.mission.aims;
         vm.group = vm.groupObj.name;
         vm.ready = vm.groupObj.ready.finish;
@@ -271,33 +288,33 @@ export default {
         vm.lastupdateTime = 0;
         if (vm.ready) {
           vm.lastupdateTime = vm.groupObj.ready.time;
-          vm.status = "PREPARING";
+          vm.status = "准备中";
         }
         vm.takeoff = vm.groupObj.takeoff.finish;
         if (vm.takeoff) {
           vm.lastupdateTime = vm.groupObj.takeoff.time;
-          vm.status = "TAKEN OFF";
+          vm.status = "起飞";
         }
         vm.seenFire = vm.groupObj.seenFire.finish;
-        if (vm.seenFire) vm.status = "SEEN FIRE";
+        if (vm.seenFire) vm.status = "穿过窗口";
 
         vm.seenTar1 = vm.groupObj.seenTar1.finish;
         if (vm.seenTar1) {
           vm.seenTar1 += vm.groupObj.seenTar1.correct;
-          vm.status = "SEEN TARGET 1";
-          if (!vm.groupObj.seenTar1.correct) vm.status = "WRONG TARGET 3";
+          vm.status = "找到目标";
+          if (!vm.groupObj.seenTar1.correct) vm.status = "目标错误";
         }
         vm.seenTar2 = vm.groupObj.seenTar2.finish;
         if (vm.seenTar2) {
           vm.seenTar2 += vm.groupObj.seenTar2.correct;
-          vm.status = "SEEN TARGET 2";
-          if (!vm.groupObj.seenTar2.correct) vm.status = "WRONG TARGET 2";
+          vm.status = "找到目标";
+          if (!vm.groupObj.seenTar2.correct) vm.status = "目标错误";
         }
         vm.seenTar3 = vm.groupObj.seenTar3.finish;
         if (vm.seenTar3) {
           vm.seenTar3 += vm.groupObj.seenTar3.correct;
-          vm.status = "SEEN TARGET 3";
-          if (!vm.groupObj.seenTar3.correct) vm.status = "WRONG TARGET 3";
+          vm.status = "找到目标";
+          if (!vm.groupObj.seenTar3.correct) vm.status = "目标错误";
         }
         vm.crush = vm.groupObj.crush;
         vm.end = vm.groupObj.end;
@@ -305,11 +322,11 @@ export default {
         clearInterval(vm.timer);
         if (vm.end) {
           vm.timenow = vm.end;
-          vm.status = "EXIT";
+          vm.status = "任务失败";
         }
         if (vm.done) {
           vm.timenow = vm.groupObj.done.time;
-          vm.status = "DONE";
+          vm.status = "任务结束";
         }
         if (!vm.done && !vm.end) vm.setTimer();
       });
@@ -344,16 +361,32 @@ export default {
     },
     doneReady() {
       this.$http.get(encodeURI(`/api/ready/${this.groupId}`));
-      this.fireHide = this.tar1Hide = this.tar2Hide = this.tar3Hide = 1;
     },
     doneTakeoff() {
       this.$http.get(encodeURI(`/api/takeoff/${this.groupId}`));
+    },
+    doneSeenFire() {
+      this.$http.get(encodeURI(`/api/seenFire/${this.groupId}`));
     },
     doneDone() {
       this.$http.get(encodeURI(`/api/done/${this.groupId}`));
     },
     doneCrush() {
       this.$http.get(encodeURI(`/api/crush/${this.groupId}`));
+    },
+    doneTar1() {
+      this.$http.get(encodeURI(`/api/seenTar1/${this.groupId}/${this.tar1}`));
+    },
+    doneTar2() {
+      this.$http.get(encodeURI(`/api/seenTar2/${this.groupId}/${this.tar2}`));
+    },
+    doneTar3() {
+      this.$http.get(encodeURI(`/api/seenTar3/${this.groupId}/${this.tar3}`));
+    },
+    refresh() {
+      this.$http.get(encodeURI(`/api/gen/${this.groupId}/${this.group}`));
+      this.fireHide = this.tar1Hide = this.tar2Hide = this.tar3Hide = 1;
+      this.status = "比赛即将开始";
     },
   },
 };

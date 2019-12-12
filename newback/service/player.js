@@ -53,7 +53,7 @@ module.exports.seenTar1 = async (group, Tar1) => {
   if (!g.seenTar1.finish) {
     g.seenTar1.finish = true;
     g.seenTar1.time = Date.now();
-    g.seenTar1.correct = (`${Tar1}` == g.mission.Tar1)
+    g.seenTar1.correct = (`${Tar1}` == g.mission.tar1)
     scoring(g);
     await (db[group] = g);
     console.log(1);
@@ -70,8 +70,8 @@ module.exports.seenTar2 = async (group, Tar2) => {
   if (!g.seenTar2.finish) {
     g.seenTar2.finish = true;
     g.seenTar2.time = Date.now();
-    g.seenTar2.correct = (`${Tar2}` == g.mission.Tar2)
-    scoring(g);
+    g.seenTar2.correct = (`${Tar2}` == g.mission.tar2)
+    scoring(g)
     await (db[group] = g)
     console.log(1);
     if (!g.seenTar2.correct)
@@ -87,7 +87,7 @@ module.exports.seenTar3 = async (group, Tar3) => {
   if (!g.seenTar3.finish) {
     g.seenTar3.finish = true;
     g.seenTar3.time = Date.now();
-    g.seenTar3.correct = (`${Tar3}` == g.mission.Tar3)
+    g.seenTar3.correct = (`${Tar3}` == g.mission.tar3)
     scoring(g);
     await (db[group] = g)
     console.log(1);
