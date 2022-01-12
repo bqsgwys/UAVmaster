@@ -12,7 +12,7 @@
     "compression-webpack-plugin": "^3.0.0",
     "core-js": "^3.3.2",
     "csvtojson": "^2.0.10",
-    "markdown-it": "^10.0.0",
+    "markdown-it": "^12.3.2",
     "moment": "^2.24.0",
     "roboto": "^0.8.2",
     "socket.io-client": "^2.3.0",
